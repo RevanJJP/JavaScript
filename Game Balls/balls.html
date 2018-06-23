@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <style> body {padding: 0; margin: 0;} </style>
+</head>
+<svg width="20" height="20", id="Punkty">
+        <text>Text</text> />
+</svg>
+<body>
+        <canvas id="world"></canvas>
+
+        <script src="https://rawgit.com/liabru/matter-js/master/build/matter.min.js"></script>
+        <script>
+
+        var height=window.innerHeight;
+        var width=window.innerWidth;
+        var circleRadius=(height+width)/30;
+        var squareSize=circleRadius*1.5;
+
+        //Fetch our canvas
+        var canvas = document.getElementById('world');
+        
+
+
+        //Setup Matter JS
+        var engine = Matter.Engine.create();
+        engine.world.gravity.y = 0;
+            
+        var d = new Date();
+        var ball = Matter.Bodies.circle(width/2, height/2, circleRadius, {
+                density: 0.03,
+                friction: 0.01,
+                frictionAir: 0,
+                restitution: 1,
+                render: {
+                    fillStyle: '#F35e66',
+                    strokeStyle: 'black',
+                    lineWidth: 1
+                }
+        });
+
+        var world = engine.world;
+
+        var render = Matter.Render.create({
+            canvas: canvas,
+            engine: engine,
+            options: {
+                width: width,
+                height: height,
+                background: 'transparent',
+                wireframes: false,
+                showAngleIndicator: false
+            }
+        });
+
+        var floor = Matter.Bodies.rectangle(width/2, height+60, width+circleRadius, 120, {
+            isStatic: true, //An immovable object
+            render: {
+            visible: false
+        }
+        });
+        var roof = Matter.Bodies.rectangle(width/2, -60, width+circleRadius, 120, {
+            isStatic: true, //An immovable object
+            render: {
+                visible: false
+            }
+        });
+        var leftWall = Matter.Bodies.rectangle(-60, height/2, 120, height+circleRadius, {
+            isStatic: true, //An immovable object
+            render: {
+                visible: false
+            }
+        });
+        var rightWall = Matter.Bodies.rectangle(width+60, height/2, 120, height+circleRadius, {
+            isStatic: true, //An immovable object
+            render: {
+                visible: false
+            }
+        });
+
+        function randomSquare(world) {
+            var square = Matter.Bodies.rectangle((width-squareSize/2)*Math.random(), (width-squareSize/2)*Math.random(), squareSize, squareSize, {
+                density: 0.04,
+                friction: 0.5,
+                frictionAir: 0.005,
+                restitution: 0.3,
+                render: {
+                    fillStyle: '#33cc33',
+                    strokeStyle: 'black',
+                    lineWidth: 1
+                }
+            });
+            return square;
+        }
+
+        function lifeSquare(world, square) {
+            var lifeTime=6*1000;
+            var startDate=new Date();
+            var currentDate=new Date();
+            var temp=new Date();
+            temp=currentDate-startDate;
+            // console.log("Start");
+            // setTimeout(function(){
+            //     console.log(temp)
+            // }, 2000);
+            // console.log("Stop");
+            setTimeout(function(){
+            square.render.fillStyle='#F35e66';
+            }, lifeTime/2);
+            // while(temp < lifeTime) {
+            //     setTimeout(function(){
+            //      console.log(temp)
+            //     }, 500);
+            //     currentDate=new Date();
+            //     temp=currentDate.getSeconds()-startDate.getSeconds();
+            // }
+            
+            setTimeout(function() {
+                Matter.World.remove(world, square);
+                square=randomSquare(world);
+                Matter.World.add(world, square);
+                lifeSquare(world, square);
+            }, lifeTime+Math.random()*2000);
+        }
+
+        window.addEventListener('load', function() {
+            
+            //Add a ball
+
+            Matter.World.add(world, ball);
+            
+            //Add a floor
+            Matter.World.add(world, rightWall);
+            Matter.World.add(world, leftWall);
+            Matter.World.add(world, floor);
+            Matter.World.add(world, roof);
+
+            
+            //Start the engine
+            Matter.Engine.run(engine);
+            Matter.Render.run(render);
+            for(var i=0; i<5; i++) {
+                setTimeout(function(){
+                    var square=randomSquare(world);
+                    Matter.World.add(world, square);
+                    lifeSquare(world, square);
+                }, 0);
+                console.log("Działam " + i);
+            }
+            
+
+        });
+        
+
+        window.addEventListener('click', function() {
+            pos=ball.position
+            vel=20;
+            var force={x: event.clientX-pos.x, y: event.clientY-pos.y}
+            var len = Math.sqrt(force.x*force.x+force.y*force.y)
+            var force={x: vel*force.x/len, y: vel*force.y/len}
+            Matter.Body.setVelocity(ball, force);
+            var date=new Date();
+        })
+
+        </script>
+</body>
+</html>
