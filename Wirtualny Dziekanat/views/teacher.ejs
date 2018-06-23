@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WD</title>
+</head>
+<body>
+    <form action="/teacher/add" method="POST">
+        <input type="text" placeholder="id nauczyciela" name="teacher_id">
+        <input type="text" placeholder="id studenta" name="student_id">
+        <input type="text" placeholder="ocena" name="mark">
+        <button type="submit">Dodaj Ocenę</button>
+    </form>
+
+    <form action="/teacher/delete" method="PUT">
+      <input type="text" placeholder="id nauczyciela" name="teacher_id">
+      <input type="text" placeholder="id studenta" name="student_id">
+      <input type="text" placeholder="ocena" name="mark">
+      <button type="submit">Usuń Ocenę</button>
+    </form>
+
+    <form action="/teacher/put" method="PUT">
+      <input type="text" placeholder="id nauczyciela" name="teacher_id">
+      <input type="text" placeholder="id studenta" name="student_id">
+      <input type="text" placeholder="stara ocena" name="mark">
+      <input type="text" placeholder="nowa ocena" name="new_mark">
+      <button type="submit">Zmień Ocenę</button>
+    </form>
+
+
+    <ul class="mark">
+        <% for(var i=0; i<mark.length; i++) {%>
+          <li class="mark">
+            Student:<span><%= mark[i].student_id %></span>
+            <span><%= mark[i].mark %></span>
+          </li>
+        <% } %>
+    </ul>
+
+</body>
+</html>

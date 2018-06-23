@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WD</title>
+</head>
+<body>
+    Twoje Oceny
+    <ul class="mark">
+        <% for(var i=0; i<mark.length; i++) {%>
+          <li class="mark">
+            Nauczyciel:<span><%= mark[i].teacher_id %></span>
+            <span><%= mark[i].mark %></span>
+          </li>
+        <% } %>
+    </ul>
+
+</body>
+</html>
